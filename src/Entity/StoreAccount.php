@@ -30,7 +30,7 @@ class StoreAccount
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=31)
+     * @ORM\Column(type="string", length=127)
      */
     private $password;
 
