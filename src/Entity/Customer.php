@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\BuyerRepository;
+use App\Repository\CustomerRepository;
 use Doctrine\ORM\Mapping as ORM;
 use \DateTimeInterface;
 
 /**
- * @ORM\Entity(repositoryClass=BuyerRepository::class)
+ * @ORM\Entity(repositoryClass=CustomerRepository::class)
  */
-class Buyer
+class Customer
 {
     /**
      * @ORM\Id

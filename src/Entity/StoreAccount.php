@@ -35,14 +35,14 @@ class StoreAccount
     private $password;
 
     /**
-     * @ORM\OneToMany(targetEntity=Buyer::class, mappedBy="storeAccount")
+     * @ORM\OneToMany(targetEntity=Customer::class, mappedBy="storeAccount")
      * @ORM\JoinColumn(nullable=true)
      */
-    private $buyers;
+    private $customers;
 
     public function __construct()
     {
-        $this->buyers = new ArrayCollection();
+        $this->customers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,29 +87,29 @@ class StoreAccount
     }
 
     /**
-     * @return Collection|Buyer[]
+     * @return Collection|Customer[]
      */
-    public function getBuyers(): Collection
+    public function getCustomers(): Collection
     {
-        return $this->buyers;
+        return $this->customers;
     }
 
-    public function addBuyer(Buyer $buyer): self
+    public function addCustomer(Customer $customer): self
     {
-        if (!$this->buyers->contains($buyer)) {
-            $this->buyers[] = $buyer;
-            $buyer->setStoreAccount($this);
+        if (!$this->customers->contains($customer)) {
+            $this->customers[] = $customer;
+            $customer->setStoreAccount($this);
         }
 
         return $this;
     }
 
-    public function removeBuyer(Buyer $buyer): self
+    public function removeCustomer(Customer $customer): self
     {
-        if ($this->buyers->removeElement($buyer)) {
+        if ($this->customers->removeElement($customer)) {
             // set the owning side to null (unless already changed)
-            if ($buyer->getStoreAccount() === $this) {
-                $buyer->setStoreAccount(null);
+            if ($customer->getStoreAccount() === $this) {
+                $customer->setStoreAccount(null);
             }
         }
 
