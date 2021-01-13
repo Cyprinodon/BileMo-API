@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\Repository\ProductRepository;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
@@ -44,7 +45,7 @@ class ProductController extends AbstractController
     {
         $product = $productRepository->find($id);
 
-        if(!$product) {
+        if(!$product instanceof Product) {
             return new JsonResponse(["message" => "Le produit portant l'identifiant '".$id."' n'a pas été trouvé."],404);
         }
         $serializedProduct = $serializer->serialize($product, 'json');
