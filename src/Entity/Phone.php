@@ -6,6 +6,7 @@ use App\Repository\PhoneRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=PhoneRepository::class)
@@ -16,55 +17,65 @@ class Phone
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups({"list", "show"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="smallint")
+     * @Serializer\Groups({"show"})
      */
     private $weight;
 
     /**
      * @ORM\ManyToOne(targetEntity=Display::class, inversedBy="phones")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups({"show"})
      */
     private $display;
 
     /**
      * @ORM\OneToOne(targetEntity=Brand::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups({"list", "show"})
      */
     private $brand;
 
     /**
      * @ORM\ManyToMany(targetEntity=Color::class)
+     * @Serializer\Groups({"show"})
      */
     private $possibleColors;
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="phone", orphanRemoval=true)
+     * @Serializer\Groups({"show"})
      */
     private $products;
 
     /**
      * @ORM\ManyToMany(targetEntity=Storage::class, inversedBy="phones")
+     * @Serializer\Groups({"show"})
      */
     private $storage;
 
     /**
      * @ORM\ManyToMany(targetEntity=OS::class, inversedBy="phones")
+     * @Serializer\Groups({"show"})
      */
     private $possibleOS;
 
     /**
      * @ORM\ManyToOne(targetEntity=Processor::class, inversedBy="phones")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups({"show"})
      */
     private $processor;
 
     /**
      * @ORM\ManyToOne(targetEntity=Dimensions::class)
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups({"show"})
      */
     private $size;
 

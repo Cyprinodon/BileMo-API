@@ -30,7 +30,7 @@ class OS
     private $manufacturer;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Phone::class, mappedBy="os")
+     * @ORM\ManyToMany(targetEntity=Phone::class, mappedBy="possibleOS")
      */
     private $phones;
 

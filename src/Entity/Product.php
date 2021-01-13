@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
 use \DateTimeInterface;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
@@ -15,32 +16,38 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups({"list", "show"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="decimal", precision=6, scale=2)
+     * @Serializer\Groups({"list", "show"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Serializer\Groups({"show"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Serializer\Groups({"show"})
      */
     private $launchDate;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Serializer\Groups({"show"})
      */
     private $createdAt;
 
     /**
      * @ORM\ManyToOne(targetEntity=Phone::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups({"list", "show"})
      */
     private $phone;
 
