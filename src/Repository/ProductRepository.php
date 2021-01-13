@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Product;
-use \LogicException;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Pagerfanta;
 
@@ -15,7 +14,6 @@ use Pagerfanta\Pagerfanta;
  */
 class ProductRepository extends AbstractPaginatableRepository
 {
-    private const DEFAULT_ORDER = 'asc';
     private const DEFAULT_PRODUCT_QUANTITY = 5; //Nombre de produits par page
     private const DEFAULT_PAGE = 1; //Page à afficher
 
@@ -25,18 +23,16 @@ class ProductRepository extends AbstractPaginatableRepository
     }
 
     public function findAndPaginate(
-        string $order = self::DEFAULT_ORDER,
         int $page = self::DEFAULT_PAGE,
         int $quantity = self::DEFAULT_PRODUCT_QUANTITY) : Pagerfanta
     {
-        if($order != 'asc' || $order != 'desc') {
+/*        if($order != 'asc' || $order != 'desc') {
             throw new LogicException("$order must be 'asc' or 'desc'");
-        }
+        }*/
         $queryBuilder = $this->createQueryBuilder('product')
-            ->select('product')
-            ->orderBy('product.price', $order);
+            ->select('product');
 
-        return $this->paginate($queryBuilder, $quantity, $page - 1);
+        return $this->paginate($queryBuilder, $quantity, $page);
     }
 
     // /**

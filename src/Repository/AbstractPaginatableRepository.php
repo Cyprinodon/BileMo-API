@@ -10,7 +10,7 @@ use \LogicException;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 
-class AbstractPaginatableRepository extends ServiceEntityRepository
+abstract class AbstractPaginatableRepository extends ServiceEntityRepository
 {
     public function paginate(QueryBuilder $queryBuilder, int $max, int $offset) : Pagerfanta
     {
@@ -18,12 +18,13 @@ class AbstractPaginatableRepository extends ServiceEntityRepository
             throw new LogicException("$max can't be equal or less than 0");
         }
 
-        if($offset < 0) {
-            throw new LogicException("$offset can't be less than 0");
+        if($offset < 1) {
+            throw new LogicException("$offset can't be less than 1");
         }
 
         $pager = new Pagerfanta(new QueryAdapter($queryBuilder));
-        $pager->setCurrentPage(ceil($offset + 1) / $max);
+        $pager->setCurrentPage((int)ceil($offset / $max));
+
         $pager->setMaxPerPage($max);
 
         return $pager;

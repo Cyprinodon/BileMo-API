@@ -20,7 +20,7 @@ class Processor
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity=Brand::class, inversedBy="processor", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Brand::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $brand;
