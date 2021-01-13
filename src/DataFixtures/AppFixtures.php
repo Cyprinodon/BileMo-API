@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Buyer;
+use App\Entity\Customer;
 use App\Entity\Color;
 use App\Entity\Dimensions;
 use App\Entity\Display;
@@ -73,7 +73,7 @@ class AppFixtures extends Fixture
             ["name" => "A-Phonie", "email" => "welcome@aphonie.com"],
             ["name" => "Phony Business", "email" => "reception@phonybusiness.us"]
         ],
-        "buyers" => [
+        "customers" => [
             ["firstname" => "Amir", "lastname" => "Najjar"],
             ["firstname" => "George", "lastname" => "Abitbol"],
             ["firstname" => "Susan", "lastname" => "Mustard"],
@@ -147,16 +147,16 @@ class AppFixtures extends Fixture
         }
 
         //Hydratation des consommateurs ============================
-        $persistedBuyer = [];
-        foreach($this->data["buyers"] as $buyerData) {
-            $buyer = new Buyer();
-            $buyer->setFirstName($buyerData["firstname"]);
-            $buyer->setLastName($buyerData["lastname"]);
+        $persistedCustomer = [];
+        foreach($this->data["customers"] as $customerData) {
+            $customer = new Customer();
+            $customer->setFirstName($customerData["firstname"]);
+            $customer->setLastName($customerData["lastname"]);
             $store = $persistedStore[array_rand($persistedStore)];
-            $buyer->setStoreAccount($store);
-            $buyer->setCreatedAt(new DateTime());
-            $manager->persist($buyer);
-            array_push($persistedBuyer, $buyer);
+            $customer->setStoreAccount($store);
+            $customer->setCreatedAt(new DateTime());
+            $manager->persist($customer);
+            array_push($persistedCustomer, $customer);
         }
 
         //Hydratation des téléphones ============================
