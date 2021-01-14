@@ -15,7 +15,7 @@ class Brand
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Serializer\Groups({"show"})
+     * @Serializer\Groups({"default"})
      */
     private $id;
 

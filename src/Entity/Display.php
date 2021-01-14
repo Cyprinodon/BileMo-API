@@ -6,9 +6,11 @@ use App\Repository\DisplayRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation  as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=DisplayRepository::class)
+ * @Serializer\AccessorOrder("custom", custom = {"id", "touchscreen", "pixel_size", "viewport", "phones"})
  */
 class Display
 {
@@ -16,23 +18,27 @@ class Display
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups({"show", "default"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Serializer\Groups({"show", "default"})
      */
     private $touchscreen;
 
     /**
      * @ORM\ManyToOne(targetEntity=Dimensions::class)
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups({"default"})
      */
     private $pixelSize;
 
     /**
      * @ORM\ManyToOne(targetEntity=Dimensions::class)
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups({"default"})
      */
     private $viewport;
 
@@ -115,5 +121,25 @@ class Display
         }
 
         return $this;
+    }
+
+    /**
+     * @Serializer\VirtualProperty()
+     * @Serializer\SerializedName("viewport")
+     * @Serializer\Groups({"show"})
+     */
+    public function getSerializedViewport()
+    {
+        return $this->getViewport()->getSerializedDimensions();
+    }
+
+    /**
+     * @Serializer\VirtualProperty()
+     * @Serializer\SerializedName("pixel_size")
+     * @Serializer\Groups({"show"})
+     */
+    public function getSerializedPixelSize()
+    {
+        return $this->getPixelSize()->getSerializedDimensions();
     }
 }
