@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Customer;
+use App\Entity\StoreAccount;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Pagerfanta;
 
@@ -23,26 +24,26 @@ class CustomerRepository extends AbstractPaginatableRepository
     }
 
     public function findByStoreAccountAndPaginate(
-        int $storeId,
+        StoreAccount $store,
         int $page = self::DEFAULT_PAGE,
         int $quantity = self::DEFAULT_CUSTOMER_QUANTITY) : Pagerfanta
     {
         $queryBuilder = $this->createQueryBuilder('customer')
             ->select('customer')
-            ->where('customer.storeAccount = ?1')
-            ->setParameter(1, $storeId);
+            ->where('customer.storeAccount = :store')
+            ->setParameter('store', $store);
 
         return $this->paginate($queryBuilder, $quantity, $page);
     }
 
-    public function findFromStore(int $id, int $storeId)
+    public function findFromStore(int $id, StoreAccount $store)
     {
         $queryBuilder = $this->createQueryBuilder('customer')
             ->select('customer')
-            ->where('customer.storeAccount = ?1')
-            ->andWhere('customer.id = ?2')
-            ->setParameter(1, $storeId)
-            ->setParameter(2, $id);
+            ->where('customer.storeAccount = :store')
+            ->andWhere('customer.id = :id')
+            ->setParameter('store', $store)
+            ->setParameter('id', $id);
 
         $results = $queryBuilder->getQuery()->getResult();
         return $results[0];
