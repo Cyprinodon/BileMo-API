@@ -6,9 +6,11 @@ use App\Repository\StorageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=StorageRepository::class)
+ * @Serializer\AccessorOrder("custom", custom = {"id", "capacity", "unit", "phones"})
  */
 class Storage
 {
@@ -16,16 +18,19 @@ class Storage
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups({"show", "default"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="integer")
+     * @Serializer\Groups ({"default"})
      */
     private $capacity;
 
     /**
      * @ORM\Column(type="string", length=2)
+     * @Serializer\Groups({"default"})
      */
     private $unit;
 
@@ -93,5 +98,15 @@ class Storage
         }
 
         return $this;
+    }
+
+    /**
+     * @Serializer\VirtualProperty()
+     * @Serializer\SerializedName("capacity")
+     * @Serializer\Groups({"show"})
+     */
+    public function getSerializedStorage()
+    {
+        return $this->getCapacity().$this->getUnit();
     }
 }

@@ -17,65 +17,67 @@ class Phone
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Serializer\Groups({"list", "show"})
+     * @Serializer\Groups({"default"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="smallint")
-     * @Serializer\Groups({"show"})
+     * @Serializer\Groups({"default"})
      */
     private $weight;
 
     /**
      * @ORM\ManyToOne(targetEntity=Display::class, inversedBy="phones")
      * @ORM\JoinColumn(nullable=false)
-     * @Serializer\Groups({"show"})
+     * @Serializer\Groups({"default", "show"})
      */
     private $display;
 
     /**
      * @ORM\OneToOne(targetEntity=Brand::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
-     * @Serializer\Groups({"list", "show"})
+     * @Serializer\Groups({"default"})
      */
     private $brand;
 
     /**
      * @ORM\ManyToMany(targetEntity=Color::class)
-     * @Serializer\Groups({"show"})
+     * @Serializer\Groups({"show", "default"})
      */
     private $possibleColors;
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="phone", orphanRemoval=true)
-     * @Serializer\Groups({"show"})
+     * @Serializer\SkipWhenEmpty()
      */
     private $products;
 
     /**
      * @ORM\ManyToMany(targetEntity=Storage::class, inversedBy="phones")
-     * @Serializer\Groups({"show"})
+     * @Serializer\SkipWhenEmpty()
+     * @Serializer\Groups({"show", "default"})
      */
     private $storage;
 
     /**
      * @ORM\ManyToMany(targetEntity=OS::class, inversedBy="phones")
-     * @Serializer\Groups({"show"})
+     * @Serializer\SkipWhenEmpty()
+     * @Serializer\Groups({"show", "default"})
      */
     private $possibleOS;
 
     /**
      * @ORM\ManyToOne(targetEntity=Processor::class, inversedBy="phones")
      * @ORM\JoinColumn(nullable=false)
-     * @Serializer\Groups({"show"})
+     * @Serializer\Groups({"show", "default"})
      */
     private $processor;
 
     /**
      * @ORM\ManyToOne(targetEntity=Dimensions::class)
      * @ORM\JoinColumn(nullable=false)
-     * @Serializer\Groups({"show"})
+     * @Serializer\Groups({"default"})
      */
     private $size;
 
@@ -252,5 +254,41 @@ class Phone
         $this->size = $size;
 
         return $this;
+    }
+
+    /**
+     * @Serializer\VirtualProperty()
+     * @Serializer\SerializedName("brand")
+     * @Serializer\Groups({"list", "show"})
+     */
+    public function getSerializedBrand()
+    {
+        $brand = $this->getBrand();
+        $name = $brand->getName();
+        $serial = $brand->getSerie();
+        $manufacturer = $brand->getManufacturer();
+
+        return $manufacturer." ".$name." ".$serial;
+    }
+
+    /**
+     * @Serializer\VirtualProperty()
+     * @Serializer\SerializedName("weight")
+     * @Serializer\Groups({"list", "show"})
+     */
+    public function getSerializedWeight()
+    {
+        return $this->getWeight()."g";
+
+    }
+
+    /**
+     * @Serializer\VirtualProperty()
+     * @Serializer\SerializedName("size")
+     * @Serializer\Groups({"list", "show"})
+     */
+    public function getSerializedSize()
+    {
+        return $this->getSize()->getSerializedDimensions();
     }
 }

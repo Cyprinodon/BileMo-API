@@ -22,13 +22,10 @@ class ProductRepository extends AbstractPaginatableRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function findAndPaginate(
+    public function findAllAndPaginate(
         int $page = self::DEFAULT_PAGE,
         int $quantity = self::DEFAULT_PRODUCT_QUANTITY) : Pagerfanta
     {
-/*        if($order != 'asc' || $order != 'desc') {
-            throw new LogicException("$order must be 'asc' or 'desc'");
-        }*/
         $queryBuilder = $this->createQueryBuilder('product')
             ->select('product');
 

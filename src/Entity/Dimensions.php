@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\DimensionsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=DimensionsRepository::class)
@@ -71,5 +72,19 @@ class Dimensions
         $this->unit = $unit;
 
         return $this;
+    }
+
+    /**
+     * @Serializer\VirtualProperty()
+     * @Serializer\SerializedName("dimensions")
+     * @Serializer\Groups({"show"})
+     */
+    public function getSerializedDimensions()
+    {
+        $width = $this->getWidth();
+        $height = $this->getHeight();
+        $unit = $this->getUnit();
+
+        return $width."x".$height.$unit;
     }
 }
