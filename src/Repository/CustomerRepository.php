@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Customer;
 use App\Entity\StoreAccount;
+use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Pagerfanta\Pagerfanta;
 
@@ -45,8 +46,12 @@ class CustomerRepository extends AbstractPaginatableRepository
             ->setParameter('store', $store)
             ->setParameter('id', $id);
 
-        $results = $queryBuilder->getQuery()->getResult();
-        return $results[0];
+        try {
+            $result = $queryBuilder->getQuery()->getSingleResult();
+        } catch (UnexpectedResultException $e) {
+            $result = null;
+        }
+        return $result;
     }
 
     // /**
