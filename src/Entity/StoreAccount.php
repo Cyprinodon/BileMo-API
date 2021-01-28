@@ -6,10 +6,13 @@ use App\Repository\StoreAccountRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=StoreAccountRepository::class)
+ * @UniqueEntity(fields={"name"}, message="Il existe déjà un compte à ce nom. Veuillez en choisir un autre.")
  */
 class StoreAccount implements UserInterface
 {
@@ -22,11 +25,13 @@ class StoreAccount implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=127, unique=true)
+     * @Assert\NotBlank(message="Le nom ne peut être vide."
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=127)
+     * @Assert\NotBlank(message="L'adresse mail ne peut être vide")
      */
     private $email;
 
