@@ -6,6 +6,7 @@ use App\Entity\Customer;
 use App\Entity\StoreAccount;
 use App\Repository\CustomerRepository;
 use App\Repository\StoreAccountRepository;
+use App\Service\CacheableResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
@@ -59,12 +60,7 @@ class CustomerController extends AbstractController
         $serializationGroup = SerializationContext::create()->setGroups('list');
         $serializedCustomers = $serializer->serialize($customers, 'json', $serializationGroup);
 
-        $response = new Response($serializedCustomers, 200, self::DEFAULT_HEADER);
-        $response->setPublic();
-        $response->setMaxAge(3600);
-        $response->headers->addCacheControlDirective('must-revalidate', true);
-
-        return $response;
+        return new CacheableResponse($serializedCustomers, 200, self::DEFAULT_HEADER);
     }
 
     /**
@@ -101,11 +97,7 @@ class CustomerController extends AbstractController
         $serializationGroup = SerializationContext::create()->setGroups('show');
         $serializedCustomer = $serializer->serialize($customer, 'json', $serializationGroup);
 
-        $response = new Response($serializedCustomer, 200, self::DEFAULT_HEADER);
-        $response->setPublic();
-        $response->setMaxAge(3600);
-        $response->headers->addCacheControlDirective('must-revalidate', true);
-        return $response;
+        return new CacheableResponse($serializedCustomer, 200, self::DEFAULT_HEADER);
     }
 
     /**
