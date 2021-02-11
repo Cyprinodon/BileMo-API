@@ -123,6 +123,8 @@ class CustomerController extends AbstractController
             return new JsonResponse(["message" => "Le magasin n°".$storeId." n'a pas été trouvé."], 404);
         }
 
+        $this->denyAccessUnlessGranted($store);
+
         $data = $request->getContent();
         $customer = $serializer->deserialize($data, Customer::class, 'json');
 
@@ -165,6 +167,8 @@ class CustomerController extends AbstractController
         if(!$store instanceof StoreAccount) {
             return new JsonResponse(["message" => "Le magasin n°".$storeId." n'a pas été trouvé."], 404);
         }
+
+        $this->denyAccessUnlessGranted($store);
 
         $customer = $customerRepository->findFromStore($customerId, $store);
 
