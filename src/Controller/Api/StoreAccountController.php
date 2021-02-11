@@ -52,7 +52,6 @@ class StoreAccountController extends AbstractController
      * @param string $id
      * @param EntityManagerInterface $entityManager
      * @param StoreAccountRepository $storeRepository
-     * @param SerializerInterface $serializer
      * @return JsonResponse
      */
     public function delete(string $id, EntityManagerInterface $entityManager, StoreAccountRepository $storeRepository)
