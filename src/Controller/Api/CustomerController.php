@@ -6,13 +6,17 @@ use App\Entity\Customer;
 use App\Entity\StoreAccount;
 use App\Repository\CustomerRepository;
 use App\Repository\StoreAccountRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Delete;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use DateTime;
 
 class CustomerController extends AbstractController
 {
@@ -93,5 +97,84 @@ class CustomerController extends AbstractController
         $serializedCustomer = $serializer->serialize($customer, 'json', $serializationGroup);
 
         return new Response($serializedCustomer, 200, self::DEFAULT_HEADER);
+    }
+
+    /**
+     * @Post(path="stores/{storeId}/customers", name="customers_new", requirements={"storeId"="\d+"})
+     * @param Request $request
+     * @param string $storeId
+     * @param EntityManagerInterface $entityManager
+     * @param StoreAccountRepository $storeRepository
+     * @param CustomerRepository $customerRepository
+     * @param SerializerInterface $serializer
+     * @return JsonResponse
+     */
+    public function new(
+        Request $request,
+        string $storeId,
+        EntityManagerInterface $entityManager,
+        StoreAccountRepository $storeRepository,
+        CustomerRepository $customerRepository,
+        SerializerInterface $serializer):JsonResponse
+    {
+        $store = $storeRepository->find($storeId);
+
+        if(!$store instanceof StoreAccount) {
+            return new JsonResponse(["message" => "Le magasin n°".$storeId." n'a pas été trouvé."], 404);
+        }
+
+        $data = $request->getContent();
+        $customer = $serializer->deserialize($data, Customer::class, 'json');
+
+        $existingCustomer = $customerRepository->findOneBy([
+            "firstname" => $customer->getFirstName(),
+            "lastName" => $customer->getLastName()
+        ]);
+
+        if($existingCustomer instanceof Customer) {
+            return new JsonResponse(["message" => "Ce consommateur existe déjà pour le magasin ".$storeId."."], 409);
+        }
+
+        $customer->setStoreAccount($store);
+        $customer->setCreatedAt(new DateTime);
+        $entityManager->persist($customer);
+        $entityManager->flush();
+
+        $data = ["message" => "Le consommateur '".$customer->getFirstName()." ".$customer->getLastName()."' a été créé avec succès et lié au magasin ".$storeId."."];
+        return new JsonResponse($data, 201);
+    }
+
+    /**
+     * @Delete(path="stores/{storeId}/customers/{customerId}", name="customers_delete, requirements={"storeId"="\d+", "customerId"="\d+"})
+     * @param string $storeId
+     * @param string $customerId
+     * @param EntityManagerInterface $entityManager
+     * @param StoreAccountRepository $storeRepository
+     * @param CustomerRepository $customerRepository
+     * @return JsonResponse
+     */
+    public function delete(
+        string $storeId,
+        string $customerId,
+        EntityManagerInterface $entityManager,
+        StoreAccountRepository $storeRepository,
+        CustomerRepository $customerRepository)
+    {
+        $store = $storeRepository->find($storeId);
+
+        if(!$store instanceof StoreAccount) {
+            return new JsonResponse(["message" => "Le magasin n°".$storeId." n'a pas été trouvé."], 404);
+        }
+
+        $customer = $customerRepository->findFromStore($customerId, $store);
+
+        if(!$customer instanceof Customer) {
+            return  new JsonResponse(["message" => "Le consommateur n°".$customerId." n'a pas été trouvé pour le magasin ".$storeId."."], 404);
+        }
+
+        $entityManager->remove($customer);
+        $entityManager->flush();
+
+        return new JsonResponse(["message" => "Le consommateur n°".$customerId." a été supprimé avec succès"], 200);
     }
 }
