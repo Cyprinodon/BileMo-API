@@ -36,7 +36,12 @@ class ProductController extends AbstractController
         $serializationGroup = SerializationContext::create()->setGroups('list');
         $serializedProducts = $serializer->serialize($products, 'json', $serializationGroup);
 
-        return new Response($serializedProducts, 200, self::DEFAULT_HEADER);
+        $response = new Response($serializedProducts, 200, self::DEFAULT_HEADER);
+        $response->setPublic();
+        $response->setMaxAge(3600);
+        $response->headers->addCacheControlDirective('must-revalidate', true);
+
+        return $response;
     }
 
     /**
@@ -56,6 +61,11 @@ class ProductController extends AbstractController
         $serializationGroup = SerializationContext::create()->setGroups('show');
         $serializedProduct = $serializer->serialize($product, 'json', $serializationGroup);
 
-        return new Response($serializedProduct, 200, self::DEFAULT_HEADER);
+        $response = new Response($serializedProduct, 200, self::DEFAULT_HEADER);
+        $response->setPublic();
+        $response->setMaxAge(3600);
+        $response->headers->addCacheControlDirective('must-revalidate', true);
+
+        return $response;
     }
 }

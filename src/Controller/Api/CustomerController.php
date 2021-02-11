@@ -59,7 +59,12 @@ class CustomerController extends AbstractController
         $serializationGroup = SerializationContext::create()->setGroups('list');
         $serializedCustomers = $serializer->serialize($customers, 'json', $serializationGroup);
 
-        return new Response($serializedCustomers, 200, self::DEFAULT_HEADER);
+        $response = new Response($serializedCustomers, 200, self::DEFAULT_HEADER);
+        $response->setPublic();
+        $response->setMaxAge(3600);
+        $response->headers->addCacheControlDirective('must-revalidate', true);
+
+        return $response;
     }
 
     /**
@@ -96,7 +101,11 @@ class CustomerController extends AbstractController
         $serializationGroup = SerializationContext::create()->setGroups('show');
         $serializedCustomer = $serializer->serialize($customer, 'json', $serializationGroup);
 
-        return new Response($serializedCustomer, 200, self::DEFAULT_HEADER);
+        $response = new Response($serializedCustomer, 200, self::DEFAULT_HEADER);
+        $response->setPublic();
+        $response->setMaxAge(3600);
+        $response->headers->addCacheControlDirective('must-revalidate', true);
+        return $response;
     }
 
     /**
