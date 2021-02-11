@@ -43,6 +43,8 @@ class CustomerController extends AbstractController
             return new JsonResponse($body, 404, self::DEFAULT_HEADER);
         }
 
+        $this->denyAccessUnlessGranted($store);
+
         $customers = !is_null($page) ?
             $customerRepository->findByStoreAccountAndPaginate($store, $page):
             $customerRepository->findByStoreAccountAndPaginate($store);
@@ -79,7 +81,7 @@ class CustomerController extends AbstractController
             return new JsonResponse($body, 404, self::DEFAULT_HEADER);
         }
 
-        /*Vérifier que l'utilisateur authentifié corresponds à 'store'. S'il ne l'est pas, retourner un code 403 (forbidden)*/
+        $this->denyAccessUnlessGranted($store);
 
         $customer = $customerRepository->findFromStore($customerId, $store);
 

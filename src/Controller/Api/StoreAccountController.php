@@ -49,14 +49,13 @@ class StoreAccountController extends AbstractController
 
     /**
      * @Delete("/stores/{id}", name="store_account_delete")
-     * @param Request $request
      * @param string $id
      * @param EntityManagerInterface $entityManager
      * @param StoreAccountRepository $storeRepository
      * @param SerializerInterface $serializer
      * @return JsonResponse
      */
-    public function delete(Request $request, string $id, EntityManagerInterface $entityManager, StoreAccountRepository $storeRepository, SerializerInterface $serializer)
+    public function delete(string $id, EntityManagerInterface $entityManager, StoreAccountRepository $storeRepository)
     {
         //Ajouter la logique d'authentification et vérifier que l'entité appartient bien à l'utilisateur ayant fait la requête
 
@@ -69,6 +68,8 @@ class StoreAccountController extends AbstractController
 
             return new JsonResponse($data, 404);
         }
+
+        $this->denyAccessUnlessGranted($store);
 
         $entityManager->remove($store);
         $entityManager->flush();
