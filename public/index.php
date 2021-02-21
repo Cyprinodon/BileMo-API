@@ -1,7 +1,7 @@
 <?php
 
 use App\Kernel;
-use app\CacheKernel;
+use App\CacheKernel;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;

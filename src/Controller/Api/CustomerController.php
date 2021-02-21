@@ -124,7 +124,7 @@ class CustomerController extends AbstractController
             return new JsonResponse(["message" => "Le magasin n°".$storeId." n'a pas été trouvé."], 404);
         }
 
-        $this->denyAccessUnlessGranted($store);
+        $this->denyAccessUnlessGranted("access", $store);
 
         $data = $request->getContent();
         $customer = $serializer->deserialize($data, Customer::class, 'json');
@@ -148,7 +148,7 @@ class CustomerController extends AbstractController
     }
 
     /**
-     * @Delete(path="stores/{storeId}/customers/{customerId}", name="customers_delete, requirements={"storeId"="\d+", "customerId"="\d+"})
+     * @Delete(path="stores/{storeId}/customers/{customerId}", name="customers_delete", requirements={"storeId"="\d+", "customerId"="\d+"})
      * @param string $storeId
      * @param string $customerId
      * @param EntityManagerInterface $entityManager
