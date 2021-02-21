@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
@@ -10,28 +10,33 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use FOS\RestBundle\Controller\Annotations\Get;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends AbstractController
 {
+    private const DEFAULT_HEADER = ['Content-Type' => 'application/json'];
     /**
      * @Get(path="/products", name="products_list")
      * @param Request $request
      * @param ProductRepository $productRepository
      * @param SerializerInterface $serializer
-     * @return JsonResponse
+     * @return Response
      */
-    public function list(Request $request,ProductRepository $productRepository, SerializerInterface $serializer): JsonResponse
+    public function list(Request $request,ProductRepository $productRepository, SerializerInterface $serializer): Response
     {
         $page = $request->query->get('page');
 
-        $products = $page != null ?
-            $productRepository->findAndPaginate('asc',$page):
-            $productRepository->findAndPaginate();
+        $products = is_int($page) ?
+            $productRepository->findAllAndPaginate($page):
+            $productRepository->findAllAndPaginate();
+
         $pagerIterator = $products->getIterator();
         $products = iterator_to_array($pagerIterator);
+
         $serializationGroup = SerializationContext::create()->setGroups('list');
         $serializedProducts = $serializer->serialize($products, 'json', $serializationGroup);
-        return new JsonResponse($serializedProducts);
+
+        return new Response($serializedProducts, 200, self::DEFAULT_HEADER);
     }
 
     /**
@@ -39,17 +44,18 @@ class ProductController extends AbstractController
      * @param string $id
      * @param ProductRepository $productRepository
      * @param SerializerInterface $serializer
-     * @return JsonResponse
+     * @return Response
      */
-    public function show(string $id, ProductRepository $productRepository, SerializerInterface $serializer) :JsonResponse
+    public function show(string $id, ProductRepository $productRepository, SerializerInterface $serializer) :Response
     {
         $product = $productRepository->find($id);
 
         if(!$product instanceof Product) {
-            return new JsonResponse(["message" => "Le produit portant l'identifiant '".$id."' n'a pas été trouvé."],404);
+            return new JsonResponse(["message" => "Le produit portant l'identifiant '".$id."' n'a pas été trouvé."], 404);
         }
-        $serializedProduct = $serializer->serialize($product, 'json');
+        $serializationGroup = SerializationContext::create()->setGroups('show');
+        $serializedProduct = $serializer->serialize($product, 'json', $serializationGroup);
 
-        return new JsonResponse($serializedProduct);
+        return new Response($serializedProduct, 200, self::DEFAULT_HEADER);
     }
 }

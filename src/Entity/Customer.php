@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\Mapping as ORM;
 use \DateTimeInterface;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=CustomerRepository::class)
@@ -15,16 +16,19 @@ class Customer
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups({"show", "default", "list"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=127)
+     * @Serializer\Groups({"show", "default", "list"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=127)
+     * @Serializer\Groups({"show", "default", "list"})
      */
     private $lastName;
 

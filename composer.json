@@ -14,6 +14,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.8",
         "jms/serializer-bundle": "^3.7",
+        "lexik/jwt-authentication-bundle": "^2.10",
         "pagerfanta/doctrine-collections-adapter": "^2.5",
         "pagerfanta/doctrine-orm-adapter": "^2.5",
         "phpdocumentor/reflection-docblock": "^5.2",
@@ -25,6 +26,7 @@
         "symfony/property-access": "5.2.*",
         "symfony/property-info": "5.2.*",
         "symfony/proxy-manager-bridge": "5.2.*",
+        "symfony/validator": "5.2.*",
         "symfony/yaml": "5.2.*"
     },
     "require-dev": {

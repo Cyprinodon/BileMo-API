@@ -6,11 +6,15 @@ use App\Repository\StoreAccountRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=StoreAccountRepository::class)
+ * @UniqueEntity(fields={"name"}, message="Il existe déjà un compte à ce nom. Veuillez en choisir un autre.")
  */
-class StoreAccount
+class StoreAccount implements UserInterface
 {
     /**
      * @ORM\Id
@@ -20,17 +24,24 @@ class StoreAccount
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=127)
+     * @ORM\Column(type="string", length=127, unique=true)
+     * @Assert\NotBlank(message="Le nom ne peut être vide.")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=127)
+     * @Assert\NotBlank(message="L'adresse mail ne peut être vide")
      */
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=127)
+     * @ORM\Column(type="json")
+     */
+    private $roles = [];
+
+    /**
+     * @ORM\Column(type="string")
      */
     private $password;
 
@@ -43,6 +54,7 @@ class StoreAccount
     public function __construct()
     {
         $this->customers = new ArrayCollection();
+        $this->roles = ["ROLE_USER"];
     }
 
     public function getId(): ?int
@@ -70,6 +82,31 @@ class StoreAccount
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUsername(): string
+    {
+        return (string) $this->name;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        return array_unique($this->roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }
@@ -114,5 +151,15 @@ class StoreAccount
         }
 
         return $this;
+    }
+
+    public function getSalt()
+    {
+        // Nothing to add here (hopefully).
+    }
+
+    public function eraseCredentials()
+    {
+        // Nothing to add here.
     }
 }

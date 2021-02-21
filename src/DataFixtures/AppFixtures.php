@@ -16,10 +16,11 @@ use Doctrine\Persistence\ObjectManager;
 use App\Entity\Brand;
 use App\Entity\Phone;
 use App\Entity\Storage;
-use \Exception;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
+    protected  $passwordEncoder;
     protected $data = [
         "storages" => [
             16, 32, 64, 128, 256, 512
@@ -81,8 +82,14 @@ class AppFixtures extends Fixture
             ["firstname" => "Mathilda", "lastname" => "Sandevoir"],
             ["firstname" => "Dimitri", "lastname" => "Ivanovich Sokoulov"],
             ["firstname" => "Asmee", "lastname" => "Kshatriya"]
-        ]
+        ],
+        "password" => "multipass"
     ];
+
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $this->passwordEncoder = $passwordEncoder;
+    }
 
     public function load(ObjectManager $manager)
     {
@@ -134,14 +141,8 @@ class AppFixtures extends Fixture
             $store->setName($storeData["name"]);
             $store->setEmail($storeData["email"]);
 
-            //Mot de passe crypté aléatoire nécessitant un bloc Try catch
-            try {
-                $password = random_bytes(8);
-            } catch(Exception $e) {
-                $password = "superSecret";
-            }
-            // cryptage md5 pour enlever les caractères invalides en base de données
-            $store->setPassword(md5($password));
+            $plainPassword = $this->data["password"];
+            $store->setPassword($this->passwordEncoder->encodePassword($store, $plainPassword));
             $manager->persist($store);
             array_push($persistedStore, $store);
         }

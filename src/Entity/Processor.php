@@ -6,9 +6,11 @@ use App\Repository\ProcessorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=ProcessorRepository::class)
+ * @Serializer\AccessorOrder("custom", custom = {"id", "brand", "cores", "frequency", "phones"})
  */
 class Processor
 {
@@ -16,22 +18,26 @@ class Processor
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups({"default", "show"})
      */
     private $id;
 
     /**
      * @ORM\OneToOne(targetEntity=Brand::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Groups({"default"})
      */
     private $brand;
 
     /**
      * @ORM\Column(type="smallint")
+     * @Serializer\Groups({"default", "show"})
      */
     private $cores;
 
     /**
      * @ORM\Column(type="integer")
+     * @Serializer\Groups({"default"})
      */
     private $frequency;
 
@@ -114,5 +120,30 @@ class Processor
         }
 
         return $this;
+    }
+
+    /**
+     * @Serializer\VirtualProperty()
+     * @Serializer\SerializedName("frequency")
+     * @Serializer\Groups({"show"})
+     */
+    public function getSerializedFrequency()
+    {
+        return $this->getFrequency()."hz";
+    }
+
+    /**
+     * @Serializer\VirtualProperty()
+     * @Serializer\SerializedName("brand")
+     * @Serializer\Groups({"show"})
+     */
+    public function getSerializedBrand()
+    {
+        $brand = $this->getBrand();
+        $name = $brand->getName();
+        $serial = $brand->getSerie();
+        $manufacturer = $brand->getManufacturer();
+
+        return $manufacturer." ".$name." ".$serial;
     }
 }

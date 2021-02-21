@@ -4,9 +4,11 @@ namespace App\Entity;
 
 use App\Repository\ColorRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=ColorRepository::class)
+ * @Serializer\AccessorOrder("custom", custom = {"id", "name", "hexadecimal", "phones"})
  */
 class Color
 {
@@ -14,16 +16,19 @@ class Color
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Serializer\Groups({"show", "default"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=127, nullable=true)
+     * @Serializer\Groups({"default", "show"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=6)
+     * @Serializer\Groups({"default"})
      */
     private $hexadecimal;
 
@@ -54,5 +59,15 @@ class Color
         $this->hexadecimal = $hexadecimal;
 
         return $this;
+    }
+
+    /**
+     * @Serializer\VirtualProperty()
+     * @Serializer\SerializedName("hexadecimal")
+     * @Serializer\Groups({"show"})
+     */
+    public function getSerializedHexadecimal()
+    {
+        return "#".$this->getHexadecimal();
     }
 }
