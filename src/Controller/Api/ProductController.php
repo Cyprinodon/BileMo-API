@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use App\Service\CacheableResponse;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,7 +37,7 @@ class ProductController extends AbstractController
         $serializationGroup = SerializationContext::create()->setGroups('list');
         $serializedProducts = $serializer->serialize($products, 'json', $serializationGroup);
 
-        return new Response($serializedProducts, 200, self::DEFAULT_HEADER);
+        return new CacheableResponse($serializedProducts, 200, self::DEFAULT_HEADER);
     }
 
     /**
@@ -56,6 +57,6 @@ class ProductController extends AbstractController
         $serializationGroup = SerializationContext::create()->setGroups('show');
         $serializedProduct = $serializer->serialize($product, 'json', $serializationGroup);
 
-        return new Response($serializedProduct, 200, self::DEFAULT_HEADER);
+        return new CacheableResponse($serializedProduct, 200, self::DEFAULT_HEADER);
     }
 }

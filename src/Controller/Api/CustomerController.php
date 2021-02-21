@@ -6,6 +6,7 @@ use App\Entity\Customer;
 use App\Entity\StoreAccount;
 use App\Repository\CustomerRepository;
 use App\Repository\StoreAccountRepository;
+use App\Service\CacheableResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
@@ -59,7 +60,7 @@ class CustomerController extends AbstractController
         $serializationGroup = SerializationContext::create()->setGroups('list');
         $serializedCustomers = $serializer->serialize($customers, 'json', $serializationGroup);
 
-        return new Response($serializedCustomers, 200, self::DEFAULT_HEADER);
+        return new CacheableResponse($serializedCustomers, 200, self::DEFAULT_HEADER);
     }
 
     /**
@@ -96,7 +97,7 @@ class CustomerController extends AbstractController
         $serializationGroup = SerializationContext::create()->setGroups('show');
         $serializedCustomer = $serializer->serialize($customer, 'json', $serializationGroup);
 
-        return new Response($serializedCustomer, 200, self::DEFAULT_HEADER);
+        return new CacheableResponse($serializedCustomer, 200, self::DEFAULT_HEADER);
     }
 
     /**
@@ -123,7 +124,7 @@ class CustomerController extends AbstractController
             return new JsonResponse(["message" => "Le magasin n°".$storeId." n'a pas été trouvé."], 404);
         }
 
-        $this->denyAccessUnlessGranted($store);
+        $this->denyAccessUnlessGranted("access", $store);
 
         $data = $request->getContent();
         $customer = $serializer->deserialize($data, Customer::class, 'json');
@@ -147,7 +148,7 @@ class CustomerController extends AbstractController
     }
 
     /**
-     * @Delete(path="stores/{storeId}/customers/{customerId}", name="customers_delete, requirements={"storeId"="\d+", "customerId"="\d+"})
+     * @Delete(path="stores/{storeId}/customers/{customerId}", name="customers_delete", requirements={"storeId"="\d+", "customerId"="\d+"})
      * @param string $storeId
      * @param string $customerId
      * @param EntityManagerInterface $entityManager

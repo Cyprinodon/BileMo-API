@@ -6,31 +6,41 @@ namespace App\Security\Voter;
 
 use App\Entity\StoreAccount;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class StoreVoter implements VoterInterface
+class StoreVoter extends Voter
 {
-    /**
-     * @inheritDoc
-     */
-    public function vote(TokenInterface $token, $subject, array $attributes)
+    const ACCESS = "access";
+
+    protected function supports(string $attribute, $subject)
+    {
+        $validAccess = [self::ACCESS];
+
+        if(!$subject instanceof StoreAccount) {
+            return false;
+        }
+
+        if(!in_array($attribute, $validAccess)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token)
     {
         $loggedStore = $token->getUser();
 
         if(!$loggedStore instanceof StoreAccount) {
-            return self::ACCESS_DENIED;
+            return false ;
         }
 
-        $storeRequested = $attributes[0];
+        $storeRequested = $subject;
 
-        foreach($attributes as $attribute) {
-            if($attribute instanceof StoreAccount) {
-                if($loggedStore === $storeRequested) {
-                    return self::ACCESS_GRANTED;
-                }
-            }
+        if($loggedStore === $storeRequested) {
+            return true;
         }
 
-        return self::ACCESS_ABSTAIN;
+        return false;
     }
 }
