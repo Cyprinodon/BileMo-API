@@ -12,12 +12,37 @@ use FOS\RestBundle\Controller\Annotations\Get;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OAPI;
 
 class ProductController extends AbstractController
 {
     private const DEFAULT_HEADER = ['Content-Type' => 'application/json'];
     /**
      * @Get(path="/products", name="products_list")
+     *
+     * Liste des produits Bilemo.
+     *
+     * Cette requête récupère une liste paginée simplifiée de tous les produits disponibles.
+     *
+     * @OAPI\Response(
+     *     response=200,
+     *     description="Renvoie une page de la liste de tous les produits Bilemo disponibles (5 produits par page).",
+     *     @OAPI\JsonContent(
+     *        type="array",
+     *        @OAPI\Items(ref=@Model(type=Product::class, groups={"list"}))
+     *     )
+     * )
+     * @OAPI\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="Champ permettant de sélectionner une page spécifique. Si non renseigné, la première page sera renvoyée par défaut.",
+     *     @OAPI\Schema(type="string")
+     * )
+     * @OAPI\Tag(name="produits")
+     * @Security(name="Bearer")
+     *
      * @param Request $request
      * @param ProductRepository $productRepository
      * @param SerializerInterface $serializer
@@ -42,6 +67,26 @@ class ProductController extends AbstractController
 
     /**
      * @Get(path="/products/{id}", name="products_show", requirements={"id"="\d+"})
+     *
+     * Détails d'un produit Bilemo.
+     *
+     * Cette requête récupère toutes les informations relatives au produit correspondant à l'id sélectionné.
+     *
+     * @OAPI\Response(
+     *     response=200,
+     *     description="Renvoie toutes les informations liées à l'id de produit précisé dans l'Endpoint.",
+     *     @OAPI\JsonContent(
+     *        type="object",
+     *        @Model(type=Product::class, groups={"show"})
+     *     )
+     * )
+     * @OAPI\Response(
+     *     response=404,
+     *     description="Aucun produit trouvé pour l'id spécifié."
+     * )
+     * @OAPI\Tag(name="produits")
+     * @Security(name="Bearer")
+     *
      * @param string $id
      * @param ProductRepository $productRepository
      * @param SerializerInterface $serializer
