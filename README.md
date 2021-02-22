@@ -14,7 +14,7 @@
       - Mettre à jour la structure de la base de données en entrant la commande `bin/console doctrine:migrations:migrate`
       - Charger le jeu de fausses données dans la base de données en entrant la commande `bin/console doctrine:fixtures:load`
 
-    3. Configurer les variables d'environnement
+  3. Configurer les variables d'environnement
       - Dans le fichier .env, ajouter/modifier les variables suivantes:
            - DATABASE_URL : les identifiants de la base de données: `mysql://user:password@127.0.0.1:3306/db_name?serverVersion=5.7` où user corresponds au nom du compte ayant accès à la base de données, password corresponds au mot de passe et db_name au nom de la base de données
            - APP_ENV : mettre la valeur prod
