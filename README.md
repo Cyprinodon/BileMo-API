@@ -38,4 +38,6 @@ Sinon, vous pouvez créer un nouveau compte en allant sur l'endpoint `POST /api/
 }
 ```
 
-La documentation complète de l'API peut être consultée à l'adresse `GET /api/doc` par défaut et à l'adresse ` GET /api/doc.json` au format json
+La documentation complète de l'API peut être consultée à l'adresse `GET /api/doc` par défaut et à l'adresse ` GET /api/doc.json` au format json.
+
+Les diagrammes relatifs au projet peuvent être visualisés dans le dossiers `/diagrams`
