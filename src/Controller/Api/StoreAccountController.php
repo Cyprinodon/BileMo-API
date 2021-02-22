@@ -8,16 +8,45 @@ use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerInterface;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Delete;
+use OpenApi\Annotations\RequestBody;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OAPI;
 
 class StoreAccountController extends AbstractController
 {
     /**
      * @Post("/stores", name="store_account_new")
+     *
+     * Enregistrement d'un magasin client de Bilemo.
+     *
+     * Cette requête permet d'ajouter un compte magasin pour s'identifier auprès de l'API.
+     *
+     * @RequestBody(
+     *     required=true,
+     *     @OAPI\JsonContent(
+     *            @OAPI\Property(property="name", description="Le prénom du consommateur à ajouter.", type="string"),
+     *            @OAPI\Property(property="email", description="L'adresse email du responsable à contacter.", type="string"),
+     *            @OAPI\Property(property="password", description="Le mot de passe à utiliser pour s'autentifier et pouvoir récupérer un jeton d'identification.", type="string"),
+     *     ),
+     * )
+     *
+     * @OAPI\Response(
+     *     response=400,
+     *     description="Requête erronnée. Le corps de la requête contient des informations refusées par le validateur.",
+     * )
+     *
+     * @OAPI\Response(
+     *     response=201,
+     *     description="Le compte a été ajouté avec succès.",
+     * )
+     *
+     * @OAPI\Tag(name="comptes magasin")
+     * @Security(name="Bearer")
      * @param Request $request
      * @param ValidatorInterface $validator
      * @param EntityManagerInterface $entityManager
@@ -49,6 +78,25 @@ class StoreAccountController extends AbstractController
 
     /**
      * @Delete("/stores/{id}", name="store_account_delete")
+     *
+     * Suppression d'un magasin client de Bilemo.
+     *
+     * Cette requête permet de supprimer un compte magasin de l'API.
+     *
+     *
+     * @OAPI\Response(
+     *     response=404,
+     *     description="Compte magasin inexistant.",
+     * )
+     *
+     * @OAPI\Response(
+     *     response=200,
+     *     description="Le compte a été supprimé avec succès.",
+     * )
+     *
+     * @OAPI\Tag(name="comptes magasin")
+     * @Security(name="Bearer")
+     *
      * @param string $id
      * @param EntityManagerInterface $entityManager
      * @param StoreAccountRepository $storeRepository

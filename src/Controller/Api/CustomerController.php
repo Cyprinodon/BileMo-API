@@ -18,6 +18,9 @@ use FOS\RestBundle\Controller\Annotations\Delete;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use DateTime;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OAPI;
 
 class CustomerController extends AbstractController
 {
@@ -25,6 +28,29 @@ class CustomerController extends AbstractController
 
     /**
      * @Get(path="/stores/{storeId}/customers", name="customers_list", requirements={"id"="\d+"})
+     *
+     * Liste des consommateurs d'un magasin client de Bilemo.
+     *
+     * Cette requête récupère une liste paginée simplifiée de tous les clients du magasin portant l'id spécifié.
+     * Le magasin demandé doit correspondre au compte magasin connecté.
+     *
+     * @OAPI\Response(
+     *     response=200,
+     *     description="Renvoie une page de la liste de tous les consommateurs du magasin spécifié (5 consommateurs par page). Le magasin spécifié doit correspondre au magasin connecté effectuant la requête.",
+     *     @OAPI\JsonContent(
+     *        type="array",
+     *        @OAPI\Items(ref=@Model(type=Customer::class, groups={"list"}))
+     *     )
+     * )
+     * @OAPI\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="Champ permettant de sélectionner une page spécifique. Si non renseigné, la première page sera renvoyée par défaut.",
+     *     @OAPI\Schema(type="string")
+     * )
+     * @OAPI\Tag(name="consommateurs")
+     * @Security(name="Bearer")
+     *
      * @param Request $request
      * @param string $storeId
      * @param CustomerRepository $customerRepository
@@ -65,6 +91,38 @@ class CustomerController extends AbstractController
 
     /**
      * @Get(path="stores/{storeId}/customers/{customerId}", name="customers_show", requirements={"id"="\d+"})
+     *
+     * Détails d'un consommateurs lié à un magasin client de Bilemo.
+     *
+     * Cette requête récupère les informations détaillées d'un client spécifique du magasin portant l'id demandé.
+     * Le magasin demandé doit correspondre au compte magasin connecté.
+     *
+     * @OAPI\Response(
+     *     response=200,
+     *     description="Renvoie les informations du consommateur d'un magasin spécifié. Le magasin spécifié doit correspondre au magasin connecté effectuant la requête.",
+     *     @OAPI\JsonContent(
+     *        ref=@Model(type=Customer::class, groups={"show"}),
+     *     ),
+     * )
+     *
+     * @OAPI\Response(
+     *     response=404,
+     *     description="Magasin demandé non trouvé ou consommateur demandé non trouvé.",
+     * )
+     *
+     * @OAPI\Response(
+     *     response=403,
+     *     description="Accès refusé. L'id du magasin ne corresponds pas à celui du magasin connecté.",
+     * )
+     *
+     * @OAPI\Response(
+     *     response=401,
+     *     description="Accès non authorisé. Les informations d'authentification sont manquantes ou erronnées.",
+     * )
+     *
+     * @OAPI\Tag(name="consommateurs")
+     * @Security(name="Bearer")
+     *
      * @param string $storeId
      * @param string $customerId
      * @param CustomerRepository $customerRepository
@@ -102,6 +160,49 @@ class CustomerController extends AbstractController
 
     /**
      * @Post(path="stores/{storeId}/customers", name="customers_new", requirements={"storeId"="\d+"})
+     *
+     * Ajout d'un consommateurs lié à un magasin client de Bilemo.
+     *
+     * Cette requête permet d'ajouter un nouveau consommateur lié au magasin portant l'id demandé.
+     * Le magasin demandé doit correspondre au compte magasin connecté.
+     *
+     * @OAPI\RequestBody(
+     *     required=true,
+     *     @OAPI\JsonContent(
+     *        type="object",
+ *            @OAPI\Property(property="firstName", description="Le prénom du consommateur à ajouter.", type="string"),
+ *            @OAPI\Property(property="lastName", description="Le nom du consommateur à ajouter.", type="string"),
+     *     ),
+     * )
+     *
+     * @OAPI\Response(
+     *     response=201,
+     *     description="Le consommateur a été ajouté avec succcès.",
+     * )
+     *
+     * @OAPI\Response(
+     *     response=404,
+     *     description="Magasin demandé non trouvé.",
+     * )
+     *
+     * @OAPI\Response(
+     *     response=409,
+     *     description="Le consommateur existe déjà en base de données.",
+     * )
+     *
+     * @OAPI\Response(
+     *     response=403,
+     *     description="Accès refusé. L'id du magasin ne corresponds pas à celui du magasin connecté.",
+     * )
+     *
+     * @OAPI\Response(
+     *     response=401,
+     *     description="Accès non authorisé. Les informations d'authentification sont manquantes ou erronnées.",
+     * )
+     *
+     * @OAPI\Tag(name="consommateurs")
+     * @Security(name="Bearer")
+     *
      * @param Request $request
      * @param string $storeId
      * @param EntityManagerInterface $entityManager
@@ -149,6 +250,35 @@ class CustomerController extends AbstractController
 
     /**
      * @Delete(path="stores/{storeId}/customers/{customerId}", name="customers_delete", requirements={"storeId"="\d+", "customerId"="\d+"})
+     *
+     * Suppression d'un consommateurs lié à un magasin client de Bilemo.
+     *
+     * Cette requête permet de supprimer le consommateur désiré lié au magasin portant l'id demandé.
+     * Le magasin demandé doit correspondre au compte magasin connecté.
+     *
+     * @OAPI\Response(
+     *     response=200,
+     *     description="Le consommateur a bien été supprimé.",
+     * )
+     *
+     * @OAPI\Response(
+     *     response=404,
+     *     description="Magasin demandé non trouvé ou consommateur demandé non trouvé pour le magasin renseigné.",
+     * )
+     *
+     * @OAPI\Response(
+     *     response=403,
+     *     description="Accès refusé. L'id du magasin ne corresponds pas à celui du magasin connecté.",
+     * )
+     *
+     * @OAPI\Response(
+     *     response=401,
+     *     description="Accès non authorisé. Les informations d'authentification sont manquantes ou erronnées.",
+     * )
+     *
+     * @OAPI\Tag(name="consommateurs")
+     * @Security(name="Bearer")
+     *
      * @param string $storeId
      * @param string $customerId
      * @param EntityManagerInterface $entityManager
