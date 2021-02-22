@@ -34,7 +34,7 @@ class CustomerController extends AbstractController
      * Cette requête récupère une liste paginée simplifiée de tous les clients du magasin portant l'id spécifié.
      * Le magasin demandé doit correspondre au compte magasin connecté.
      *
-     * @OA\Response(
+     * @OAPI\Response(
      *     response=200,
      *     description="Renvoie une page de la liste de tous les consommateurs du magasin spécifié (5 consommateurs par page). Le magasin spécifié doit correspondre au magasin connecté effectuant la requête.",
      *     @OAPI\JsonContent(
@@ -101,18 +101,13 @@ class CustomerController extends AbstractController
      *     response=200,
      *     description="Renvoie les informations du consommateur d'un magasin spécifié. Le magasin spécifié doit correspondre au magasin connecté effectuant la requête.",
      *     @OAPI\JsonContent(
-     *        @Model(type=Customer::class, groups={"show"})
-     *     )
+     *        ref=@Model(type=Customer::class, groups={"show"}),
+     *     ),
      * )
      *
      * @OAPI\Response(
      *     response=404,
-     *     description="Magasin demandé non trouvé.",
-     * )
-     *
-     * @OAPI\Response(
-     *     response=404,
-     *     description="Consommateur demandé non trouvé.",
+     *     description="Magasin demandé non trouvé ou consommateur demandé non trouvé.",
      * )
      *
      * @OAPI\Response(
@@ -174,11 +169,9 @@ class CustomerController extends AbstractController
      * @OAPI\RequestBody(
      *     required=true,
      *     @OAPI\JsonContent(
-     *        @OAPI\Schema(
-     *            type="object",
-     *            @OAPI\Property(property="firstName", description="Le prénom du consommateur à ajouter.")
-     *            @OAPI\Property(property="lastName", description="Le nom du consommateur à ajouter.")
-     *        )
+     *        type="object",
+ *            @OAPI\Property(property="firstName", description="Le prénom du consommateur à ajouter.", type="string"),
+ *            @OAPI\Property(property="lastName", description="Le nom du consommateur à ajouter.", type="string"),
      *     ),
      * )
      *
@@ -270,12 +263,7 @@ class CustomerController extends AbstractController
      *
      * @OAPI\Response(
      *     response=404,
-     *     description="Magasin demandé non trouvé.",
-     * )
-     *
-     * @OAPI\Response(
-     *     response=404,
-     *     description="Consommateur demandé non trouvé pour le magasin renseigné.",
+     *     description="Magasin demandé non trouvé ou consommateur demandé non trouvé pour le magasin renseigné.",
      * )
      *
      * @OAPI\Response(

@@ -3,7 +3,7 @@ nelmio_api_doc:
         info:
             title: BilemoAPI
             description: API sécurisée permettant de consulter les produits de la marque Bilemo. La consultation nécessite d'être ajouté comme client par une personne habilitée.
-            version: 1.0
+            version: '1.0'
         components:
             securitySchemes:
                 Bearer:
@@ -11,7 +11,7 @@ nelmio_api_doc:
                     scheme: bearer
                     bearerFormat: JWT
         security:
-            - Bearer: [ ]
-    areas: # to filter documented areas
-        path_patterns:
-            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            - Bearer: []
+    areas:
+      path_patterns:
+          - ^/api(?!/doc$)

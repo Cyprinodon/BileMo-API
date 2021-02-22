@@ -77,7 +77,7 @@ class ProductController extends AbstractController
      *     description="Renvoie toutes les informations liées à l'id de produit précisé dans l'Endpoint.",
      *     @OAPI\JsonContent(
      *        type="object",
-     *        @Model(type=Product::class, groups={"show"})
+     *        ref=@Model(type=Product::class, groups={"show"})
      *     )
      * )
      * @OAPI\Response(

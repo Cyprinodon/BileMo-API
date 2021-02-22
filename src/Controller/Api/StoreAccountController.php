@@ -29,12 +29,9 @@ class StoreAccountController extends AbstractController
      * @RequestBody(
      *     required=true,
      *     @OAPI\JsonContent(
-     *        @OAPI\Schema(
-     *            type="object",
-     *            @OAPI\Property(property="name", description="Le prénom du consommateur à ajouter.")
-     *            @OAPI\Property(property="email", description="Ll'adresse email du responsable à contacter.")
-     *            @OAPI\Property(property="password", description="Le mot de passe à utiliser pour s'autentifier et pouvoir récupérer un jeton d'identification.")
-     *        )
+     *            @OAPI\Property(property="name", description="Le prénom du consommateur à ajouter.", type="string"),
+     *            @OAPI\Property(property="email", description="L'adresse email du responsable à contacter.", type="string"),
+     *            @OAPI\Property(property="password", description="Le mot de passe à utiliser pour s'autentifier et pouvoir récupérer un jeton d'identification.", type="string"),
      *     ),
      * )
      *
